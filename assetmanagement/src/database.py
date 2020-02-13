@@ -48,6 +48,7 @@ class Asset(Base):
     instock = Column(
         Integer,
         CheckConstraint('instock >= 0', name='check_positive'),
+        CheckConstraint('instock <= total', name='bounded_by_total'),
         nullable=False,
         default=default_instock
     )
