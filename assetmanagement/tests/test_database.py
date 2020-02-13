@@ -24,7 +24,18 @@ def test_add_borrower():
     assert(borrower.is_active == True)
     assert(borrower.loans == [])
 
-def test_add_valid_asset_1():
+def test_borrower_unique():
+    database = Database(ENGINE)
+    session = database.Session()
+
+    borrower1 = Borrower(name='Amy')
+    borrower2 = Borrower(name='Amy')
+    session.add(borrower1)
+    session.add(borrower2)
+    with pytest.raises(IntegrityError):
+        session.commit()
+
+def test_add_asset_total_positive():
     database = Database(ENGINE)
     session = database.Session()
 
@@ -41,7 +52,7 @@ def test_add_valid_asset_1():
     assert(asset.instock == test_quantity)
     assert(asset.loans == [])
 
-def test_add_valid_asset_2():
+def test_add_asset_total_zero():
     database = Database(ENGINE)
     session = database.Session()
 
@@ -58,13 +69,24 @@ def test_add_valid_asset_2():
     assert(asset.instock == test_quantity)
     assert(asset.loans == [])
 
-def test_add_invalid_asset():
+def test_add_asset_total_negative():
     database = Database(ENGINE)
     session = database.Session()
 
     with pytest.raises(IntegrityError):
         asset = Asset(name='Pen', total=-1)
         session.add(asset)
+        session.commit()
+
+def test_asset_unique():
+    database = Database(ENGINE)
+    session = database.Session()
+
+    asset1 = Asset(name='Pen', total=5)
+    asset2 = Asset(name='Pen', total=5)
+    session.add(asset1)
+    session.add(asset2)
+    with pytest.raises(IntegrityError):
         session.commit()
 
 def test_rollback():
