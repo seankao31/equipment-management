@@ -18,12 +18,13 @@ def test_add_borrower():
     session.add(borrower)
     query_borrower = session.query(Borrower).filter_by(name='Amy').one()
 
-    assert(repr(borrower) == '<User(name: Amy)>')
+    assert(repr(borrower) == '<User(name: Amy, is_active: True)>')
     assert(query_borrower == borrower)
     assert(borrower.id == 1)
+    assert(borrower.is_active == True)
     assert(borrower.loans == [])
 
-def test_add_valid_asset():
+def test_add_valid_asset_1():
     database = Database(ENGINE)
     session = database.Session()
 
@@ -32,23 +33,32 @@ def test_add_valid_asset():
     session.add(asset)
     query_asset = session.query(Asset).filter_by(name='Pen').one()
 
-    assert(repr(query_asset) == '<Asset(name: Pen, total: 10, instock: 10)>')
+    assert(repr(query_asset) == '<Asset(name: Pen, total: {}, instock: {})>'.\
+        format(test_quantity, test_quantity))
     assert(query_asset == asset)
     assert(asset.id == 1)
     assert(asset.total == test_quantity)
     assert(asset.instock == test_quantity)
     assert(asset.loans == [])
 
-def test_add_invalid_asset_1():
+def test_add_valid_asset_2():
     database = Database(ENGINE)
     session = database.Session()
 
-    with pytest.raises(IntegrityError):
-        asset = Asset(name='Pen', total=0)
-        session.add(asset)
-        session.commit()
+    test_quantity = 0
+    asset = Asset(name='Pen', total=test_quantity)
+    session.add(asset)
+    query_asset = session.query(Asset).filter_by(name='Pen').one()
 
-def test_add_invalid_asset_2():
+    assert(repr(query_asset) == '<Asset(name: Pen, total: {}, instock: {})>'.\
+        format(test_quantity, test_quantity))
+    assert(query_asset == asset)
+    assert(asset.id == 1)
+    assert(asset.total == test_quantity)
+    assert(asset.instock == test_quantity)
+    assert(asset.loans == [])
+
+def test_add_invalid_asset():
     database = Database(ENGINE)
     session = database.Session()
 
@@ -68,7 +78,7 @@ def test_rollback():
     try:
         asset = Asset(name='Pen', total=10)
         session.add(asset)
-        asset = Asset(name='Marker', total=0)
+        asset = Asset(name='Marker', total=-1)
         session.add(asset)
         session.commit()
     except IntegrityError:

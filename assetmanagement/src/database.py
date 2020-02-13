@@ -12,11 +12,13 @@ class Borrower(Base):
 
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False, index=True, unique=True)
+    is_active = Column(Boolean, nullable=False, default=True)
 
     loans = relationship('Loan', back_populates='borrower')
 
     def __repr__(self):
-        return '<User(name: {})>'.format(self.name)
+        return '<User(name: {}, is_active: {})>'.format(
+            self.name, self.is_active)
 
 def default_instock(context):
     return context.get_current_parameters()['total']
@@ -27,11 +29,11 @@ class Asset(Base):
     id = Column(Integer, primary_key=True)
     name = Column(String, nullable=False, index=True, unique=True)
     total = Column(Integer,
-        CheckConstraint('total > 0', name='check_total'),
+        CheckConstraint('total >= 0', name='check_positive'),
         nullable=False
     )
     instock = Column(Integer,
-        CheckConstraint('instock >= 0', name='check_instock'),
+        CheckConstraint('instock >= 0', name='check_positive'),
         nullable=False,
         default=default_instock
     )
