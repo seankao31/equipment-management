@@ -232,3 +232,27 @@ def test_delete_borrower_without_loan():
     session.commit()
 
     assert(session.query(Borrower).count() == 2)
+
+def test_database_get_session():
+    database = Database(ENGINE)
+
+    with database.get_session() as session:
+        borrower = Borrower(name='Amy')
+        session.add(borrower)
+
+    with database.get_session() as session:
+        query_borrower = session.query(Borrower).filter_by(name='Amy').one()
+        assert(repr(query_borrower) == '<User(name: Amy, is_active: True)>')
+        assert(query_borrower.id == 1)
+        assert(query_borrower.is_active == True)
+        assert(query_borrower.loans == [])
+
+    with pytest.raises(IntegrityError):
+        with database.get_session() as session:
+            another_borrower = Borrower(name='Bob')
+            session.add(another_borrower)
+            repeat_borrower = Borrower(name='Amy')
+            session.add(repeat_borrower)
+
+    with database.get_session() as session:
+        assert(session.query(Borrower).count() == 1)

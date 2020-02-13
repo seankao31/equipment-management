@@ -1,3 +1,5 @@
+from contextlib import contextmanager
+
 from sqlalchemy import (Boolean, CheckConstraint, Column, Date, ForeignKey,
                         Integer, String, create_engine)
 from sqlalchemy.ext.declarative import declarative_base
@@ -68,3 +70,15 @@ class Database:
         self.engine = create_engine(engine)
         Base.metadata.create_all(self.engine)
         self.Session = sessionmaker(bind=self.engine)
+
+    @contextmanager
+    def get_session(self):
+        session = self.Session()
+        try:
+            yield session
+            session.commit()
+        except:
+            session.rollback()
+            raise
+        finally:
+            session.close()
