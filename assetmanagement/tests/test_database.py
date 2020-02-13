@@ -24,6 +24,29 @@ def test_add_borrower():
     assert(borrower.is_active == True)
     assert(borrower.loans == [])
 
+def test_borrower_name_empty():
+    database = Database(ENGINE)
+    session = database.Session()
+
+    borrower = Borrower(name='')
+    session.add(borrower)
+    session.commit()
+
+    assert(session.query(Borrower).count() == 1)
+
+def test_borrower_name_chinese():
+    database = Database(ENGINE)
+    session = database.Session()
+
+    borrower = Borrower(name='美')
+    session.add(borrower)
+    session.commit()
+
+    assert(repr(borrower) == '<User(name: 美, is_active: True)>')
+    assert(borrower.id == 1)
+    assert(borrower.is_active == True)
+    assert(borrower.loans == [])
+
 def test_borrower_unique():
     database = Database(ENGINE)
     session = database.Session()
@@ -77,6 +100,16 @@ def test_add_asset_total_negative():
         asset = Asset(name='Pen', total=-1)
         session.add(asset)
         session.commit()
+
+def test_asset_name_empty():
+    database = Database(ENGINE)
+    session = database.Session()
+
+    asset = Asset(name='', total=10)
+    session.add(asset)
+    session.commit()
+
+    assert(session.query(Asset).count() == 1)
 
 def test_asset_unique():
     database = Database(ENGINE)
@@ -251,8 +284,8 @@ def test_database_get_session():
         with database.get_session() as session:
             another_borrower = Borrower(name='Bob')
             session.add(another_borrower)
-            repeat_borrower = Borrower(name='Amy')
-            session.add(repeat_borrower)
+            duplicate_borrower = Borrower(name='Amy')
+            session.add(duplicate_borrower)
 
     with database.get_session() as session:
         assert(session.query(Borrower).count() == 1)

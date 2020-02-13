@@ -13,7 +13,12 @@ class Borrower(Base):
     __tablename__ = 'borrower'
 
     id = Column(Integer, primary_key=True)
-    name = Column(String, nullable=False, index=True, unique=True)
+    name = Column(
+        String,
+        nullable=False,
+        index=True,
+        unique=True
+    )
     is_active = Column(Boolean, nullable=False, default=True)
 
     loans = relationship('Loan', back_populates='borrower')
@@ -29,12 +34,19 @@ class Asset(Base):
     __tablename__ = 'asset'
 
     id = Column(Integer, primary_key=True)
-    name = Column(String, nullable=False, index=True, unique=True)
-    total = Column(Integer,
+    name = Column(
+        String,
+        nullable=False,
+        index=True,
+        unique=True
+    )
+    total = Column(
+        Integer,
         CheckConstraint('total >= 0', name='check_positive'),
         nullable=False
     )
-    instock = Column(Integer,
+    instock = Column(
+        Integer,
         CheckConstraint('instock >= 0', name='check_positive'),
         nullable=False,
         default=default_instock
