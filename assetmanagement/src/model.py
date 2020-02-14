@@ -5,6 +5,10 @@ from sqlalchemy.orm.exc import NoResultFound
 
 from assetmanagement.src.database import Asset, Borrower, Database, Loan
 
+
+class ModelError(Exception):
+    pass
+
 class Model:
     def __init__(self, database=Database()):
         self.database = database
@@ -39,6 +43,7 @@ class Model:
 
         Raises:
             NoResultFound: if no borrower with the name exists.
+            IntegrityError: if borrower still has active loan.
         '''
 
         with self.database.get_session() as session:
@@ -47,6 +52,14 @@ class Model:
                 .filter_by(name=name)
                 .one()
             )
+            active_loan = (
+                session.query(Loan.id)
+                .filter_by(borrower_id=borrower.id, is_returned=False)
+                .first()
+            )
+            has_active_loan = active_loan is not None
+            if has_active_loan:
+                raise ModelError
             borrower.is_active = False
 
     def get_borrower_names(self, active_only=False):
@@ -120,7 +133,7 @@ class Model:
                 if remove by quantity results in negative total or instock.
         '''
 
-        if quantity and quantity < 0: # quantiy == 0 is allowed
+        if quantity is not None and quantity < 0:
             raise ValueError
         with self.database.get_session() as session:
             asset = (

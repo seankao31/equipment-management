@@ -5,7 +5,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound
 
 from assetmanagement.src.database import Asset, Borrower, Database, Loan
-from assetmanagement.src.model import Model
+from assetmanagement.src.model import Model, ModelError
 
 ENGINE = 'sqlite:///:memory:'
 
@@ -58,8 +58,12 @@ def test_deactivate_borrower():
     model.deactivate_borrower(name='Amy')
 
     with database.get_session() as session:
-        assert(session.query(Borrower.is_active).filter_by(name='Amy').one()
-            == (False,))
+        is_active = (
+            session.query(Borrower.is_active)
+            .filter_by(name='Amy')
+            .one()
+        )
+        assert(is_active == (False,))
 
 def test_deactivate_inactive_borrower():
     database, model = setup()
@@ -69,15 +73,18 @@ def test_deactivate_inactive_borrower():
     model.deactivate_borrower(name='Amy')
 
     with database.get_session() as session:
-        assert(session.query(Borrower.is_active).filter_by(name='Amy').one()
-            == (False,))
+        is_active = (
+            session.query(Borrower.is_active)
+            .filter_by(name='Amy')
+            .one()
+        )
+        assert(is_active == (False,))
 
 def test_deactivate_nonexistent_borrower():
     _, model = setup()
 
     with pytest.raises(NoResultFound):
         model.deactivate_borrower(name='Amy')
-
 
 def setup_pre_add_borrowers(database):
     borrowers = [
@@ -638,3 +645,39 @@ def test_get_loans():
     assert(len(loans_marker) == 2)
     loans_pen_overdue = model.get_loans(asset_name='Pen', overdue_only=True)
     assert(len(loans_pen_overdue) == 1)
+
+def test_deactivate_active_loan_borrower():
+    _, model = setup()
+    model.add_borrower(name='Amy')
+    model.add_asset(name='Pen', quantity=10)
+    model.borrow_asset(
+        borrower_name='Amy',
+        asset_name='Pen',
+        quantity=5,
+        datedue=NEXT_DAY
+    )
+
+    with pytest.raises(ModelError):
+        model.deactivate_borrower(name='Amy')
+
+def test_deactivate_inactive_loan_borrower():
+    database, model = setup()
+    model.add_borrower(name='Amy')
+    model.add_asset(name='Pen', quantity=10)
+    model.borrow_asset(
+        borrower_name='Amy',
+        asset_name='Pen',
+        quantity=5,
+        datedue=NEXT_DAY
+    )
+    model.return_asset(borrower_name='Amy', asset_name='Pen')
+
+    model.deactivate_borrower(name='Amy')
+
+    with database.get_session() as session:
+        is_active = (
+            session.query(Borrower.is_active)
+            .filter_by(name='Amy')
+            .one()
+        )
+        assert(is_active == (False,))
