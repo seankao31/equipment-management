@@ -1,3 +1,5 @@
+from datetime import date, datetime, timedelta
+
 import pytest
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound
@@ -354,3 +356,285 @@ def test_get_instock_assets():
     model.modify_asset_instock(name='Marker', delta=-5)
     assets = model.get_assets(instock_only=True)
     assert(assets == [('Pen', 10, 3)])
+
+def setup_for_loan(database):
+    setup_pre_add_borrowers(database)
+    setup_pre_add_assets(database)
+
+TODAY = date.today()
+PREV_DAY = TODAY - timedelta(days=1)
+NEXT_DAY = TODAY + timedelta(days=1)
+
+def test_borrow_asset():
+    database, model = setup()
+    setup_for_loan(database)
+
+    model.borrow_asset(
+        borrower_name='Amy',
+        asset_name='Pen',
+        quantity=2,
+        datedue=NEXT_DAY
+    )
+
+    with database.get_session() as session:
+        assert(session.query(Loan).count() == 1)
+        loan = session.query(Loan).one()
+        assert(loan.id == 1)
+        assert(loan.borrower_id == 1)
+        assert(loan.asset_id == 1)
+        assert(loan.quantity == 2)
+        assert(loan.datedue == NEXT_DAY)
+        assert(loan.is_returned == False)
+        borrower = loan.borrower
+        assert(borrower.id == 1)
+        assert(borrower.name == 'Amy')
+        assert(borrower.loans == [loan])
+        asset = loan.asset
+        assert(asset.id == 1)
+        assert(asset.name == 'Pen')
+        assert(asset.total == 10)
+        assert(asset.instock == 8)
+        assert(asset.loans == [loan])
+
+def test_borrow_asset_quantity_not_positive():
+    database, model = setup()
+    setup_for_loan(database)
+
+    with pytest.raises(ValueError):
+        model.borrow_asset(
+            borrower_name='Amy',
+            asset_name='Pen',
+            quantity=0,
+            datedue=NEXT_DAY
+        )
+
+    with pytest.raises(ValueError):
+        model.borrow_asset(
+            borrower_name='Amy',
+            asset_name='Pen',
+            quantity=-1,
+            datedue=NEXT_DAY
+        )
+
+def test_borrow_asset_no_result():
+    database, model = setup()
+    setup_for_loan(database)
+
+    with pytest.raises(NoResultFound):
+        model.borrow_asset(
+            borrower_name='Dio',
+            asset_name='Pen',
+            quantity=2,
+            datedue=NEXT_DAY
+        )
+
+    with pytest.raises(NoResultFound):
+        model.borrow_asset(
+            borrower_name='Amy',
+            asset_name='Pencil',
+            quantity=2,
+            datedue=NEXT_DAY
+        )
+
+def test_borrow_asset_not_enough():
+    database, model = setup()
+    setup_for_loan(database)
+
+    with pytest.raises(IntegrityError):
+        model.borrow_asset(
+            borrower_name='Amy',
+            asset_name='Pen',
+            quantity=11,
+            datedue=NEXT_DAY
+        )
+
+    with database.get_session() as session:
+        assert(session.query(Loan).count() == 0)
+
+def setup_for_return(model):
+    model.borrow_asset(
+        borrower_name='Amy',
+        asset_name='Pen',
+        quantity=3,
+        datedue=NEXT_DAY
+    )
+    model.borrow_asset(
+        borrower_name='Amy',
+        asset_name='Marker',
+        quantity=1,
+        datedue=NEXT_DAY
+    )
+    model.borrow_asset(
+        borrower_name='Amy',
+        asset_name='Pen',
+        quantity=5,
+        datedue=NEXT_DAY
+    )
+    model.borrow_asset(
+        borrower_name='Bob',
+        asset_name='Marker',
+        quantity=2,
+        datedue=NEXT_DAY
+    )
+
+def test_return_asset_1():
+    database, model = setup()
+    setup_for_loan(database)
+    setup_for_return(model)
+
+    model.return_asset(borrower_name='Amy', asset_name='Pen')
+    with database.get_session() as session:
+        returned_loans_count = (
+            session.query(Loan)
+            .filter_by(is_returned=True)
+            .count()
+        )
+        assert(returned_loans_count == 2)
+        borrower = session.query(Borrower).filter_by(name='Amy').one()
+        asset = session.query(Asset).filter_by(name='Pen').one()
+        loans = (
+            session.query(Loan)
+            .filter_by(borrower_id=borrower.id, asset_id=asset.id)
+            .all()
+        )
+        for loan in loans:
+            assert(loan.is_returned == True)
+        assert(asset.total == 10)
+        assert(asset.instock == 10)
+
+def test_return_asset_2():
+    database, model = setup()
+    setup_for_loan(database)
+    setup_for_return(model)
+
+    model.return_asset(borrower_name='Bob', asset_name='Marker')
+    with database.get_session() as session:
+        returned_loans_count = (
+            session.query(Loan)
+            .filter_by(is_returned=True)
+            .count()
+        )
+        assert(returned_loans_count == 1)
+        borrower = session.query(Borrower).filter_by(name='Bob').one()
+        asset = session.query(Asset).filter_by(name='Marker').one()
+        loans = (
+            session.query(Loan)
+            .filter_by(borrower_id=borrower.id, asset_id=asset.id)
+            .all()
+        )
+        for loan in loans:
+            assert(loan.is_returned == True)
+        assert(asset.total == 5)
+        assert(asset.instock == 4)
+
+def test_return_asset_no_result():
+    database, model = setup()
+    setup_for_loan(database)
+    setup_for_return(model)
+
+    with pytest.raises(NoResultFound):
+        model.return_asset(borrower_name='Dio', asset_name='Pen')
+
+    with pytest.raises(NoResultFound):
+        model.return_asset(borrower_name='Amy', asset_name='Pencil')
+
+    with pytest.raises(NoResultFound):
+        model.return_asset(borrower_name='Bob', asset_name='Pen')
+
+    with database.get_session() as session:
+        returned_loans_count = (
+            session.query(Loan)
+            .filter_by(is_returned=True)
+            .count()
+        )
+        assert(returned_loans_count == 0)
+
+def test_borrow_return_borrow_return():
+    database, model = setup()
+
+    model.add_borrower(name='Amy')
+    model.add_asset(name='Pen', quantity=10)
+    model.borrow_asset(
+        borrower_name='Amy',
+        asset_name='Pen',
+        quantity=3,
+        datedue=NEXT_DAY
+    )
+    model.return_asset(borrower_name='Amy', asset_name='Pen')
+    model.borrow_asset(
+        borrower_name='Amy',
+        asset_name='Pen',
+        quantity=5,
+        datedue=NEXT_DAY
+    )
+    with database.get_session() as session:
+        asset_instock = (
+            session.query(Asset.instock)
+            .filter_by(name='Pen')
+            .one()
+        )
+        assert(asset_instock == (5, ))
+    model.return_asset(borrower_name='Amy', asset_name='Pen')
+    with database.get_session() as session:
+        asset_instock = (
+            session.query(Asset.instock)
+            .filter_by(name='Pen')
+            .one()
+        )
+        assert(asset_instock == (10, ))
+
+def setup_pre_borrow_return(model):
+    model.borrow_asset(
+        borrower_name='Amy',
+        asset_name='Pen',
+        quantity=3,
+        datedue=PREV_DAY
+    )
+    model.borrow_asset(
+        borrower_name='Bob',
+        asset_name='Pen',
+        quantity=2,
+        datedue=PREV_DAY
+    )
+    model.borrow_asset(
+        borrower_name='Bob',
+        asset_name='Marker',
+        quantity=2,
+        datedue=PREV_DAY
+    )
+    model.borrow_asset(
+        borrower_name='Cindy',
+        asset_name='Pen',
+        quantity=4,
+        datedue=NEXT_DAY
+    )
+    model.borrow_asset(
+        borrower_name='Cindy',
+        asset_name='Marker',
+        quantity=1,
+        datedue=NEXT_DAY
+    )
+    model.return_asset(borrower_name='Amy', asset_name='Pen')
+    model.borrow_asset(
+        borrower_name='Amy',
+        asset_name='Pen',
+        quantity=3,
+        datedue=NEXT_DAY
+    )
+
+def test_get_loans():
+    database, model = setup()
+    setup_for_loan(database)
+    setup_pre_borrow_return(model)
+    loans_all = model.get_loans()
+    assert(len(loans_all) == 6)
+    loans_active = model.get_loans(active_only=True)
+    assert(len(loans_active) == 5)
+    loans_overdue = model.get_loans(overdue_only=True)
+    assert(len(loans_overdue) == 2)
+    loans_cindy = model.get_loans(borrower_name='Cindy')
+    assert(len(loans_cindy) == 2)
+    loans_marker = model.get_loans(asset_name='Marker')
+    assert(len(loans_marker) == 2)
+    loans_pen_overdue = model.get_loans(asset_name='Pen', overdue_only=True)
+    assert(len(loans_pen_overdue) == 1)

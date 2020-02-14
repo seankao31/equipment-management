@@ -1,6 +1,7 @@
-from datetime import date, datetime, timedelta
+from datetime import date
 
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy.orm.exc import NoResultFound
 
 from assetmanagement.src.database import Asset, Borrower, Database, Loan
 
@@ -179,3 +180,132 @@ class Model:
             query = query.order_by(Asset.name)
             assets = query.all()
         return assets
+
+    def borrow_asset(self, borrower_name, asset_name, quantity, datedue):
+        '''Borrower borrows an asset by quantity and must return by datedue.
+
+        Arguments:
+            borrower_name (str): the name of the borrower.
+            asset_name (str): the name of the asset to borrow.
+            quantity (int): the quantity of the asset to borrow. positive.
+            datedue (date): the date when borrower has to return asset.
+
+        Returns:
+            None
+
+        Raises:
+            ValueError: if quantity is not positive.
+            NoResultFound:
+                if no borrower or asset with corresponding name exist.
+            IntegrityError: if not enough asset instock to borrow.
+        '''
+
+        if quantity <= 0:
+            raise ValueError
+        with self.database.get_session() as session:
+            borrower = (
+                session.query(Borrower)
+                .filter_by(name=borrower_name)
+                .one()
+            )
+            asset = (
+                session.query(Asset)
+                .filter_by(name=asset_name)
+                .one()
+            )
+            loan = Loan(
+                borrower_id=borrower.id,
+                asset_id=asset.id,
+                quantity=quantity,
+                datedue=datedue,
+            )
+            session.add(loan)
+            asset.instock -= quantity
+
+    def return_asset(self, borrower_name, asset_name):
+        '''
+        Borrower returns asset. Quantity could not be specified.
+        Borrower must return all of them at once.
+
+        Arguments:
+            borrower_name (str): the name of the borrower.
+            asset_name (str): the name of the asset to return.
+
+        Returns:
+            None
+
+        Raises:
+            NoResultFound:
+                if no borrower or asset with corresponding name exist.
+                if no such loan exist.
+        '''
+
+        with self.database.get_session() as session:
+            borrower = (
+                session.query(Borrower)
+                .filter_by(name=borrower_name)
+                .one()
+            )
+            asset = (
+                session.query(Asset)
+                .filter_by(name=asset_name)
+                .one()
+            )
+            loans = (
+                session.query(Loan)
+                .filter_by(
+                    borrower_id=borrower.id,
+                    asset_id=asset.id,
+                    is_returned=False
+                )
+                .all()
+            )
+            if not loans:
+                raise NoResultFound
+            for loan in loans:
+                loan.is_returned = True
+                asset.instock += loan.quantity
+
+    def get_loans(self, borrower_name=None, asset_name=None,
+            active_only=False, overdue_only=False):
+        '''Get list of all loans (presumably sorted by insert time).
+
+        Arguments:
+            borrower_name (str): the name of the borrower. None means all.
+            asset_name (str): the name of the asset. None means all.
+            active_only (bool): True if want only loans that are not returned.
+            instock_only (bool):
+                True if want only loans that are overdue and not returned.
+                For ease of use, setting this argument to True automatically
+                sets active_only to True.
+
+        Returns:
+            list of tuple:
+                (borrower_name, asset_name, quantity, datedue, is_returned)
+        '''
+        if overdue_only:
+            active_only = True
+
+        with self.database.get_session() as session:
+            query = (
+                session.query(
+                    Borrower.name,
+                    Asset.name,
+                    Loan.quantity,
+                    Loan.datedue,
+                    Loan.is_returned
+                )
+                .join(Borrower)
+                .join(Asset)
+            )
+            if borrower_name is not None:
+                # 'is not None' should not be omitted because name can be ''
+                query = query.filter(Borrower.name == borrower_name)
+            if asset_name is not None:
+                query = query.filter(Asset.name == asset_name)
+            if active_only:
+                query = query.filter(Loan.is_returned == False)
+            if overdue_only:
+                query = query.filter(Loan.datedue < date.today())
+            loans = query.all()
+        return loans
