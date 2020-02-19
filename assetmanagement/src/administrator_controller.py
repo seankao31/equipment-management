@@ -9,7 +9,6 @@ class AdministratorController:
         self.dialog = QtWidgets.QDialog()
         self.view = AdministratorView(self.dialog)
         self.model = model
-        self.set_model()
 
         self.view.pushButton_AddBorrower.clicked \
             .connect(self.add_borrower)
@@ -24,6 +23,7 @@ class AdministratorController:
 
     def run(self):
         self.dialog.show()
+        self.set_model()
 
     def set_model(self):
         self.view.comboBox_Borrower.clear()
@@ -65,6 +65,8 @@ class AdministratorController:
         quantity = self.view.spinBox_AddAsset.value()
         # spinbox ensures that the number is non negative
         self.model.add_asset(asset_name, quantity)
+        self.view.lineEdit_Asset.setText('')
+        self.view.spinBox_AddAsset.setValue(0)
         self.set_model()
 
     def remove_asset(self):
