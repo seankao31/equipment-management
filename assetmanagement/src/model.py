@@ -43,7 +43,7 @@ class Model:
 
         Raises:
             NoResultFound: if no borrower with the name exists.
-            IntegrityError: if borrower still has active loan.
+            ModelError: if borrower still has active loan.
         '''
 
         with self.database.get_session() as session:

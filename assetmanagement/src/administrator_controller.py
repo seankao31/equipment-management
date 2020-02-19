@@ -2,6 +2,7 @@ from PyQt5 import QtWidgets
 from sqlalchemy.exc import IntegrityError
 
 from assetmanagement.src.administrator_view import AdministratorView
+from assetmanagement.src.model import ModelError
 from assetmanagement.src.utils import error_message
 
 class AdministratorController:
@@ -52,7 +53,7 @@ class AdministratorController:
             self.model.deactivate_borrower(borrower_name)
             self.set_model()
             # combobox ensures that NoResultFound will not be raised
-        except IntegrityError:
+        except ModelError:
             # this error can be avoided by proper combobox item setting
             error_message(
                 self.dialog,
