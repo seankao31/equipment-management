@@ -80,6 +80,21 @@ def test_deactivate_inactive_borrower():
         )
         assert(is_active == (False,))
 
+def test_add_inactive_borrower():
+    database, model = setup()
+
+    model.add_borrower(name='Amy')
+    model.deactivate_borrower(name='Amy')
+    model.add_borrower(name='Amy')
+
+    with database.get_session() as session:
+        is_active = (
+            session.query(Borrower.is_active)
+            .filter_by(name='Amy')
+            .one()
+        )
+        assert(is_active == (True,))
+
 def test_deactivate_nonexistent_borrower():
     _, model = setup()
 

@@ -27,8 +27,16 @@ class Model:
         '''
 
         with self.database.get_session() as session:
-            borrower = Borrower(name=name)
-            session.add(borrower)
+            borrower = (
+                session.query(Borrower)
+                .filter_by(name=name, is_active=False)
+                .one_or_none()
+            )
+            if borrower:
+                borrower.is_active = True
+            else:
+                borrower = Borrower(name=name)
+                session.add(borrower)
 
     def deactivate_borrower(self, name):
         '''
