@@ -15,21 +15,12 @@ class MainController:
         self.borrow_controller = BorrowController(self.model)
         self.return_controller = ReturnController(self.model)
 
-        self.view.pushButton_Administrator.clicked. \
-            connect(self.onBtnAdministratorClicked)
-        self.view.pushButton_Borrow.clicked. \
-            connect(self.onBtnBorrowClicked)
-        self.view.pushButton_Return.clicked. \
-            connect(self.onBtnReturnClicked)
+        self.view.pushButton_Administrator.clicked \
+            .connect(self.administrator_controller.run)
+        self.view.pushButton_Borrow.clicked \
+            .connect(self.borrow_controller.run)
+        self.view.pushButton_Return.clicked \
+            .connect(self.return_controller.run)
 
     def run(self):
         self.dialog.show()
-
-    def onBtnAdministratorClicked(self):
-        self.administrator_controller.run()
-
-    def onBtnBorrowClicked(self):
-        self.borrow_controller.run()
-
-    def onBtnReturnClicked(self):
-        self.return_controller.run()
