@@ -41,7 +41,7 @@ class Ui_ReturnDialog(object):
         self.comboBox_Borrower.setObjectName("comboBox_Borrower")
         self.formLayout.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.comboBox_Borrower)
         self.listWidget_Asset = QtWidgets.QListWidget(self.verticalLayoutWidget)
-        self.listWidget_Asset.setSelectionMode(QtWidgets.QAbstractItemView.NoSelection)
+        self.listWidget_Asset.setSelectionMode(QtWidgets.QAbstractItemView.MultiSelection)
         self.listWidget_Asset.setObjectName("listWidget_Asset")
         self.formLayout.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.listWidget_Asset)
         self.verticalLayout.addLayout(self.formLayout)
