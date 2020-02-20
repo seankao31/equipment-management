@@ -15,12 +15,10 @@ class BorrowListView(Ui_BorrowListDialog):
     def update_borrower_combobox(self, borrower_names):
         self.comboBox_Borrower.clear()
         self.comboBox_Borrower.addItems(borrower_names)
-        self.deselect_borrower_combobox()
 
     def update_asset_combobox(self, asset_names):
         self.comboBox_Asset.clear()
         self.comboBox_Asset.addItems(asset_names)
-        self.deselect_borrower_combobox()
 
     def get_update_table_arguments(self):
         if self.comboBox_Borrower.currentIndex() == -1:

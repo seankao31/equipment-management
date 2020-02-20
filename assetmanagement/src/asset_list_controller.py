@@ -9,25 +9,39 @@ class AssetListController:
         self.model = model
 
         self.view.checkBox_InstockOnly.stateChanged \
-            .connect(self.set_model)
+            .connect(self.update_table)
         self.view.buttonBox.rejected \
             .connect(self.dialog.reject)
 
-    def run(self):
-        self.dialog.show()
-        self.set_model()
+        self.model.add_asset.add_observer(
+            self.update_table,
+            pass_arguments=False
+        )
+        self.model.remove_asset.add_observer(
+            self.update_table,
+            pass_arguments=False
+        )
+        self.model.borrow_asset.add_observer(
+            self.update_table,
+            pass_arguments=False
+        )
+        self.model.return_asset.add_observer(
+            self.update_table,
+            pass_arguments=False
+        )
 
-    def set_model(self):
-        instock_only = self.view.checkBox_InstockOnly.isChecked()
+    def run(self):
+        self.reset()
+        self.dialog.show()
+
+    def reset(self):
+        self.view.clear_checkbox()
+        self.update_table()
+
+    def update_table(self):
+        instock_only = self.view.get_instock_only()
         assets = self.model.get_assets(
             active_only=True,
             instock_only=instock_only
         )
-        table = self.view.tableWidget
-        table.clearContents()
-        table.setRowCount(0)
-        for row, asset in enumerate(assets):
-            table.insertRow(row)
-            table.setItem(row, 0, QtWidgets.QTableWidgetItem(asset[0]))
-            table.setItem(row, 1, QtWidgets.QTableWidgetItem(str(asset[1])))
-            table.setItem(row, 2, QtWidgets.QTableWidgetItem(str(asset[2])))
+        self.view.update_table(assets)
