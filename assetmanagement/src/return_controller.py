@@ -48,15 +48,20 @@ class ReturnController:
     def update_asset_list(self):
         borrower_name = self.view.get_borrower_name()
         if borrower_name is None:
-            asset_names = []
+            assets = []
         else:
             loans = self.model.get_loans(
                 borrower_name=borrower_name,
                 active_only=True
             )
-            asset_names = list(set(loan[1] for loan in loans))
-            asset_names.sort()
-        self.view.update_asset_list(asset_names)
+            count = dict()
+            for loan in loans:
+                asset_name = loan[1]
+                quantity = loan[2]
+                count[asset_name] = count.get(asset_name, 0) + quantity
+            assets = list(k+' ({})'.format(v) for k, v in count.items())
+            assets.sort()
+        self.view.update_asset_list(assets)
 
     def return_asset(self):
         borrower_name = self.view.comboBox_Borrower.currentText()

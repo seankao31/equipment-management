@@ -11,9 +11,9 @@ class ReturnView(Ui_ReturnDialog):
         self.comboBox_Borrower.clear()
         self.comboBox_Borrower.addItems(borrower_names)
 
-    def update_asset_list(self, asset_names):
+    def update_asset_list(self, assets):
         self.listWidget_Asset.clear()
-        self.listWidget_Asset.addItems(asset_names)
+        self.listWidget_Asset.addItems(assets)
 
     def get_borrower_name(self):
         if self.comboBox_Borrower.currentIndex() == -1:
