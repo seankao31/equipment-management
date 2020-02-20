@@ -83,6 +83,7 @@ class Ui_BorrowListDialog(object):
         self.horizontalLayout_5.addItem(spacerItem)
         self.verticalLayout.addLayout(self.horizontalLayout_5)
         self.tableWidget = QtWidgets.QTableWidget(BorrowListDialog)
+        self.tableWidget.setEditTriggers(QtWidgets.QAbstractItemView.NoEditTriggers)
         self.tableWidget.setObjectName("tableWidget")
         self.tableWidget.setColumnCount(5)
         self.tableWidget.setRowCount(0)
