@@ -78,8 +78,8 @@ class AdministratorController:
             )
 
     def remove_borrower(self):
-        index, borrower_name = self.view.get_remove_borrower_arguments()
-        if index == -1:
+        borrower_name = self.view.get_borrower_name_to_remove()
+        if borrower_name is None:
             error_message(
                 self.dialog,
                 'Please select a borrower.'
@@ -106,15 +106,17 @@ class AdministratorController:
         self.view.clear_add_asset_spinbox()
 
     def update_spinbox_max(self):
-        index, asset_name, _ = self.view.get_remove_asset_arguments()
-        if index != -1:
+        asset_name, _ = self.view.get_remove_asset_arguments()
+        if asset_name is None:
+            self.view.set_remove_asset_spinbox_maximum(0)
+        else:
             asset = self.model.get_asset(asset_name)
             # asset[1] is total, asset[2] is instock
             self.view.set_remove_asset_spinbox_maximum(asset[1])
 
     def remove_asset(self):
-        index, asset_name, quantity = self.view.get_remove_asset_arguments()
-        if index == -1:
+        asset_name, quantity = self.view.get_remove_asset_arguments()
+        if asset_name is None:
             error_message(
                 self.dialog,
                 'Please select an asset.'
