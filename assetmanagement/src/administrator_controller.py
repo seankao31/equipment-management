@@ -17,6 +17,8 @@ class AdministratorController:
             .connect(self.remove_borrower)
         self.view.pushButton_AddAsset.clicked \
             .connect(self.add_asset)
+        self.view.comboBox_Asset.currentIndexChanged \
+            .connect(self.update_spinbox_max)
         self.view.pushButton_RemoveAsset.clicked \
             .connect(self.remove_asset)
         self.view.buttonBox.rejected \
@@ -74,13 +76,20 @@ class AdministratorController:
             )
 
     def remove_borrower(self):
-        borrower_name = self.view.get_borrower_name_to_remove()
+        index, borrower_name = self.view.get_remove_borrower_arguments()
+        if index == -1:
+            error_message(
+                self.dialog,
+                'Please select a borrower.'
+            )
+            return
         try:
             self.model.deactivate_borrower(borrower_name)
             self.view.deselect_borrower_combobox()
-            # combobox ensures that NoResultFound will not be raised
+            # Combobox ensures that NoResultFound will not be raised.
         except ModelError:
-            # this error can be avoided by proper combobox item setting
+            # This error can be avoided by proper combobox item setting.
+            # However, leaving it as is might be more user friendly.
             error_message(
                 self.dialog,
                 'Borrower <{}> has not returned all assets.'.format(
@@ -89,21 +98,36 @@ class AdministratorController:
 
     def add_asset(self):
         asset_name, quantity = self.view.get_add_asset_arguments()
-        # spinbox ensures that the number is non negative
+        # Spinbox ensures that the number is non negative.
         self.model.add_asset(asset_name, quantity)
         self.view.clear_asset_line_edit()
         self.view.clear_add_asset_spinbox()
 
+    def update_spinbox_max(self):
+        index, asset_name, _ = self.view.get_remove_asset_arguments()
+        if index != -1:
+            asset = self.model.get_asset(asset_name)
+            # asset[1] is total, asset[2] is instock
+            self.view.set_remove_asset_spinbox_maximum(asset[1])
+
     def remove_asset(self):
-        asset_name, quantity = self.view.get_remove_asset_arguments()
-        # comboxbox ensures that NoResultFound will not be raised
-        # spinbox ensures that the number is non negative
+        index, asset_name, quantity = self.view.get_remove_asset_arguments()
+        if index == -1:
+            error_message(
+                self.dialog,
+                'Please select an asset.'
+            )
+            return
+        # Comboxbox ensures that NoResultFound will not be raised.
+        # Spinbox ensures that the number is non negative.
         try:
             self.model.remove_asset(asset_name, quantity)
         except IntegrityError:
-            # this error can be avoided by proper combobox item setting
-            # and proper spinbox range
+            # This error can be avoided by proper combobox item setting
+            # and proper spinbox range. However, leaving as is might be
+            # more user friendly.
             error_message(
                 self.dialog,
-                'Not enough asset <{}> to be removed.'.format(asset_name)
+                ('Not enough asset <{}> to be removed. '
+                 'Some might be borrowed.'.format(asset_name))
             )

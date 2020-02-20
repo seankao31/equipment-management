@@ -35,8 +35,10 @@ class AdministratorView(Ui_AdministratorDialog):
     def get_borrower_name_to_add(self):
         return self.lineEdit_Borrower.text()
 
-    def get_borrower_name_to_remove(self):
-        return self.comboBox_Borrower.currentText()
+    def get_remove_borrower_arguments(self):
+        index = self.comboBox_Borrower.currentIndex()
+        borrower_name = self.comboBox_Borrower.currentText()
+        return index, borrower_name
 
     def get_add_asset_arguments(self):
         asset_name = self.lineEdit_Asset.text()
@@ -44,6 +46,10 @@ class AdministratorView(Ui_AdministratorDialog):
         return asset_name, quantity
 
     def get_remove_asset_arguments(self):
+        index = self.comboBox_Asset.currentIndex()
         asset_name = self.comboBox_Asset.currentText()
         quantity = self.spinBox_RemoveAsset.value()
-        return asset_name, quantity
+        return index, asset_name, quantity
+
+    def set_remove_asset_spinbox_maximum(self, maximum):
+        self.spinBox_RemoveAsset.setMaximum(maximum)
