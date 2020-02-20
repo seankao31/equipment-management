@@ -22,25 +22,51 @@ class AdministratorController:
         self.view.buttonBox.rejected \
             .connect(self.dialog.reject)
 
-    def run(self):
-        self.dialog.show()
-        self.set_model()
+        self.model.add_borrower.add_observer(
+            self.update_borrower_combobox,
+            pass_arguments=False
+        )
+        self.model.deactivate_borrower.add_observer(
+            self.update_borrower_combobox,
+            pass_arguments=False
+        )
+        self.model.add_asset.add_observer(
+            self.update_asset_combobox,
+            pass_arguments=False
+        )
+        self.model.remove_asset.add_observer(
+            self.update_asset_combobox,
+            pass_arguments=False
+        )
 
-    def set_model(self):
-        self.view.comboBox_Borrower.clear()
-        self.view.comboBox_Asset.clear()
+    def run(self):
+        self.reset()
+        self.dialog.show()
+
+    def reset(self):
+        self.update_borrower_combobox()
+        self.update_asset_combobox()
+        self.view.clear_borrower_line_edit()
+        self.view.deselect_borrower_combobox()
+        self.view.clear_asset_line_edit()
+        self.view.clear_add_asset_spinbox()
+        self.view.deselect_asset_combobox()
+        self.view.clear_remove_asset_spinbox()
+
+    def update_borrower_combobox(self):
         borrower_names = self.model.get_borrower_names(active_only=True)
-        self.view.comboBox_Borrower.addItems(borrower_names)
+        self.view.update_borrower_combobox(borrower_names)
+
+    def update_asset_combobox(self):
         assets = self.model.get_assets(active_only=True)
         asset_names = [asset[0] for asset in assets]
-        self.view.comboBox_Asset.addItems(asset_names)
+        self.view.update_asset_combobox(asset_names)
 
     def add_borrower(self):
-        borrower_name = self.view.lineEdit_Borrower.text()
+        borrower_name = self.view.get_borrower_name_to_add()
         try:
             self.model.add_borrower(borrower_name)
-            self.view.lineEdit_Borrower.setText('')
-            self.set_model()
+            self.view.clear_borrower_line_edit()
         except IntegrityError:
             error_message(
                 self.dialog,
@@ -48,10 +74,10 @@ class AdministratorController:
             )
 
     def remove_borrower(self):
-        borrower_name = self.view.comboBox_Borrower.currentText()
+        borrower_name = self.view.get_borrower_name_to_remove()
         try:
             self.model.deactivate_borrower(borrower_name)
-            self.set_model()
+            self.view.deselect_borrower_combobox()
             # combobox ensures that NoResultFound will not be raised
         except ModelError:
             # this error can be avoided by proper combobox item setting
@@ -62,22 +88,18 @@ class AdministratorController:
             )
 
     def add_asset(self):
-        asset_name = self.view.lineEdit_Asset.text()
-        quantity = self.view.spinBox_AddAsset.value()
+        asset_name, quantity = self.view.get_add_asset_arguments()
         # spinbox ensures that the number is non negative
         self.model.add_asset(asset_name, quantity)
-        self.view.lineEdit_Asset.setText('')
-        self.view.spinBox_AddAsset.setValue(0)
-        self.set_model()
+        self.view.clear_asset_line_edit()
+        self.view.clear_add_asset_spinbox()
 
     def remove_asset(self):
-        asset_name = self.view.comboBox_Asset.currentText()
-        quantity = self.view.spinBox_RemoveAsset.value()
+        asset_name, quantity = self.view.get_remove_asset_arguments()
         # comboxbox ensures that NoResultFound will not be raised
         # spinbox ensures that the number is non negative
         try:
             self.model.remove_asset(asset_name, quantity)
-            self.set_model()
         except IntegrityError:
             # this error can be avoided by proper combobox item setting
             # and proper spinbox range
