@@ -71,7 +71,7 @@ class BorrowListController:
         assets = self.model.get_assets(active_only=True)
         asset_names = [asset[0] for asset in assets]
         self.view.update_asset_combobox(asset_names)
-        self.view.deselect_borrower_combobox()
+        self.view.deselect_asset_combobox()
 
     def update_table(self):
         borrower_name, asset_name, active_only, overdue_only =\

@@ -58,11 +58,13 @@ class AdministratorController:
     def update_borrower_combobox(self):
         borrower_names = self.model.get_borrower_names(active_only=True)
         self.view.update_borrower_combobox(borrower_names)
+        self.view.deselect_borrower_combobox()
 
     def update_asset_combobox(self):
         assets = self.model.get_assets(active_only=True)
         asset_names = [asset[0] for asset in assets]
         self.view.update_asset_combobox(asset_names)
+        self.view.deselect_asset_combobox()
 
     def add_borrower(self):
         borrower_name = self.view.get_borrower_name_to_add()
@@ -122,6 +124,7 @@ class AdministratorController:
         # Spinbox ensures that the number is non negative.
         try:
             self.model.remove_asset(asset_name, quantity)
+            self.view.clear_remove_asset_spinbox()
         except IntegrityError:
             # This error can be avoided by proper combobox item setting
             # and proper spinbox range. However, leaving as is might be
