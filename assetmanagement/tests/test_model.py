@@ -350,6 +350,20 @@ def setup_pre_add_assets(database):
     with database.get_session() as session:
         session.add_all(assets)
 
+def test_get_asset():
+    database, model = setup()
+    setup_pre_add_assets(database)
+
+    asset = model.get_asset('Pen')
+    assert(asset == ('Pen', 10, 10))
+
+def test_get_asset_non_exist():
+    database, model = setup()
+    setup_pre_add_assets(database)
+
+    with pytest.raises(NoResultFound):
+        asset = model.get_asset('Pencil')
+
 def test_get_assets():
     database, model = setup()
     setup_pre_add_assets(database)

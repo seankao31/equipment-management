@@ -183,6 +183,27 @@ class Model:
             )
             asset.instock += delta
 
+    def get_asset(self, name):
+        '''Get asset by name.
+
+        Arguments:
+            name (str): the name of asset.
+
+        Returns:
+            tuple: (name, total, instock)
+
+        Raises:
+            NoResultFound: if no asset with name exists.
+        '''
+
+        with self.database.get_session() as session:
+            asset = (
+                session.query(Asset.name, Asset.total, Asset.instock)
+                .filter_by(name=name)
+                .one()
+            )
+        return asset
+
     def get_assets(self, active_only=False, instock_only=False):
         '''Get list of all assets sorted by name.
 
