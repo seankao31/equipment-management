@@ -4,6 +4,7 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound
 
 from assetmanagement.src.database import Asset, Borrower, Database, Loan
+from assetmanagement.src.observable import observable_method
 
 
 class ModelError(Exception):
@@ -13,6 +14,7 @@ class Model:
     def __init__(self, database=Database()):
         self.database = database
 
+    @observable_method()
     def add_borrower(self, name):
         '''Add borrower by name.
 
@@ -38,6 +40,7 @@ class Model:
                 borrower = Borrower(name=name)
                 session.add(borrower)
 
+    @observable_method()
     def deactivate_borrower(self, name):
         '''
         Deactivate borrower by name.
@@ -88,6 +91,7 @@ class Model:
             borrower_names = query.all()
         return [name for (name,) in borrower_names]
 
+    @observable_method()
     def add_asset(self, name, quantity):
         '''
         Add quantity to asset with name.
@@ -121,6 +125,7 @@ class Model:
                 asset = Asset(name=name, total=quantity)
                 session.add(asset)
 
+    @observable_method()
     def remove_asset(self, name, quantity=None):
         '''Remove quantity from asset with name.
 
@@ -202,6 +207,7 @@ class Model:
             assets = query.all()
         return assets
 
+    @observable_method()
     def borrow_asset(self, borrower_name, asset_name, quantity, datedue):
         '''Borrower borrows an asset by quantity and must return by datedue.
 
@@ -243,6 +249,7 @@ class Model:
             session.add(loan)
             asset.instock -= quantity
 
+    @observable_method()
     def return_asset(self, borrower_name, asset_name):
         '''
         Borrower returns asset. Quantity could not be specified.
