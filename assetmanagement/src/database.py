@@ -5,7 +5,7 @@ from sqlalchemy import (Boolean, CheckConstraint, Column, Date, ForeignKey,
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, sessionmaker
 
-from definitions import ENGINE
+from assetmanagement.src.definitions import ENGINE
 
 Base = declarative_base()
 
