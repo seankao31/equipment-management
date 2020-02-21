@@ -7,4 +7,8 @@ if getattr(sys, 'frozen', False):
 elif __file__:
     application_path = os.path.dirname(__file__)
 
-ENGINE = 'sqlite:////' + application_path + '/assetmanagement.db'
+if os.name == 'nt':
+    # Windows
+    ENGINE = 'sqlite:///' + application_path + '/assetmanagement.db'
+else:
+    ENGINE = 'sqlite:////' + application_path + '/assetmanagement.db'
