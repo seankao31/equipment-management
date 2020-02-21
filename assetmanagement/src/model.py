@@ -1,9 +1,12 @@
+import os
 from datetime import date
+from hashlib import pbkdf2_hmac
 
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound
 
-from assetmanagement.src.database import Asset, Borrower, Database, Loan
+from assetmanagement.src.database import (Asset, Borrower, Database, Loan,
+                                          Passcode)
 from assetmanagement.src.observable import observable_method
 
 
@@ -13,6 +16,37 @@ class ModelError(Exception):
 class Model:
     def __init__(self, database=Database()):
         self.database = database
+
+    def new_passcode(self, passcode):
+        salt = os.urandom(32)
+        key = pbkdf2_hmac(
+            'sha256',
+            passcode.encode('utf-8'),
+            salt,
+            100000,
+            dklen=128
+        )
+
+        with self.database.get_session() as session:
+            passcode_entry = Passcode(salt=salt, key=key)
+            session.add(passcode_entry)
+
+    def exist_passcode(self):
+        with self.database.get_session() as session:
+            entry = session.query(Passcode.salt, Passcode.key).one_or_none()
+        return entry is not None
+
+    def confirm_passcode(self, passcode):
+        with self.database.get_session() as session:
+            salt, key = session.query(Passcode.salt, Passcode.key).one()
+            computed_key = pbkdf2_hmac(
+                'sha256',
+                passcode.encode('utf-8'),
+                salt,
+                100000,
+                dklen=128
+            )
+        return key == computed_key
 
     @observable_method()
     def add_borrower(self, name):

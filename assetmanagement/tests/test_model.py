@@ -4,7 +4,8 @@ import pytest
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound
 
-from assetmanagement.src.database import Asset, Borrower, Database, Loan
+from assetmanagement.src.database import (Asset, Borrower, Database, Loan,
+                                          Passcode)
 from assetmanagement.src.model import Model, ModelError
 
 ENGINE = 'sqlite:///:memory:'
@@ -16,6 +17,27 @@ def setup():
 
 def test_create_model():
     setup()
+
+def test_new_passcode():
+    database, model = setup()
+
+    assert(model.exist_passcode() is False)
+
+    model.new_passcode(passcode='yes123')
+
+    with database.get_session() as session:
+        assert(session.query(Passcode).count() == 1)
+
+    assert(model.exist_passcode() is True)
+
+def test_confirm_passcode():
+    _, model = setup()
+
+    model.new_passcode(passcode='yes123')
+
+    assert(model.confirm_passcode(passcode='yes123') is True)
+    assert(model.confirm_passcode(passcode='yes1234') is False)
+
 
 def test_add_borrower():
     database, model = setup()

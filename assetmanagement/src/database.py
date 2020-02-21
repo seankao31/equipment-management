@@ -9,6 +9,19 @@ from assetmanagement.src.definitions import ENGINE
 
 Base = declarative_base()
 
+class Passcode(Base):
+    __tablename__ = 'passcode'
+
+    id = Column(Integer, primary_key=True)
+    salt = Column(
+        String(32),
+        nullable=False
+    )
+    key = Column(
+        String(128),
+        nullable=False
+    )
+
 class Borrower(Base):
     __tablename__ = 'borrower'
 
