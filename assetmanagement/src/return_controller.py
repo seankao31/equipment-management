@@ -64,8 +64,7 @@ class ReturnController:
         self.view.update_asset_list(assets)
 
     def return_asset(self):
-        borrower_name = self.view.comboBox_Borrower.currentText()
-        selected_items = self.view.listWidget_Asset.selectedItems()
-        for item in selected_items:
-            self.model.return_asset(borrower_name, item.text())
+        borrower_name, asset_names = self.view.get_return_arguments()
+        for asset_name in asset_names:
+            self.model.return_asset(borrower_name, asset_name)
         self.dialog.accept()

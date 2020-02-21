@@ -21,3 +21,15 @@ class ReturnView(Ui_ReturnDialog):
         else:
             borrower_name = self.comboBox_Borrower.currentText()
         return borrower_name
+
+    def get_return_arguments(self):
+        borrower_name = self.comboBox_Borrower.currentText()
+        selected_items = self.listWidget_Asset.selectedItems()
+        asset_names = []
+        for item in selected_items:
+            text = item.text()
+            i = text.rfind('(')
+            i -= 1
+            asset_name = text[:i]
+            asset_names.append(asset_name)
+        return borrower_name, asset_names
