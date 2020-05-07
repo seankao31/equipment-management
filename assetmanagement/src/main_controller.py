@@ -34,6 +34,8 @@ class MainController:
             .connect(self.borrow_controller.run)
         self.view.pushButton_Return.clicked \
             .connect(self.return_controller.run)
+        self.view.pushButton_ChangePasscode.clicked \
+            .connect(self.change_passcode_verify)
 
     def verify(self):
         if self.model.exist_passcode():
@@ -56,3 +58,19 @@ class MainController:
 
     def enter(self):
         self.dialog.show()
+
+    def change_passcode_verify(self):
+        self.passcode_controller = PasscodeController(self.model)
+        self.passcode_controller.dialog.accepted \
+            .connect(self.change_passcode_update)
+        # self.passcode_controller.dialog.rejected \
+        #     .connect(sys.exit)
+        self.passcode_controller.run()
+
+    def change_passcode_update(self):
+        self.new_passcode_controller = NewPasscodeController(self.model)
+        # self.new_passcode_controller.dialog.accepted \
+        #     .connect(self.enter)
+        # self.new_passcode_controller.dialog.rejected \
+        #     .connect(sys.exit)
+        self.new_passcode_controller.run()

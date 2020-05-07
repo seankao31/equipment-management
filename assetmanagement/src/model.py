@@ -28,12 +28,18 @@ class Model:
         )
 
         with self.database.get_session() as session:
-            passcode_entry = Passcode(salt=salt, key=key)
-            session.add(passcode_entry)
+            entry = session.query(Passcode).one_or_none()
+            if entry:
+                entry.salt = salt
+                entry.key = key
+            else:
+                passcode_entry = Passcode(salt=salt, key=key)
+                session.add(passcode_entry)
+
 
     def exist_passcode(self):
         with self.database.get_session() as session:
-            entry = session.query(Passcode.salt, Passcode.key).one_or_none()
+            entry = session.query(Passcode).one_or_none()
         return entry is not None
 
     def confirm_passcode(self, passcode):
