@@ -38,6 +38,12 @@ class Ui_MainDialog(object):
         self.pushButton_AssetList.setAutoDefault(False)
         self.pushButton_AssetList.setObjectName("pushButton_AssetList")
         self.verticalLayout.addWidget(self.pushButton_AssetList)
+        self.imageLabel = QtWidgets.QLabel(MainDialog)
+        pixmap = QtGui.QPixmap('assetmanagement/src/logo.png')
+        pixmap = pixmap.scaledToWidth(100, mode=QtCore.Qt.SmoothTransformation)
+        self.imageLabel.setPixmap(pixmap)
+        self.imageLabel.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignBottom)
+        self.verticalLayout.addWidget(self.imageLabel)
         self.gridLayout.addLayout(self.verticalLayout, 0, 0, 1, 1)
 
         self.retranslateUi(MainDialog)

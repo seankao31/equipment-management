@@ -5,9 +5,9 @@ from hashlib import pbkdf2_hmac
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm.exc import NoResultFound
 
-from assetmanagement.src.database import (Asset, Borrower, Database, Loan,
+from database import (Asset, Borrower, Database, Loan,
                                           Passcode)
-from assetmanagement.src.observable import observable_method
+from observable import observable_method
 
 
 class ModelError(Exception):

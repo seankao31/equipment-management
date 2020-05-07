@@ -1,4 +1,4 @@
-from assetmanagement.src.administrator_dialog import Ui_AdministratorDialog
+from administrator_dialog import Ui_AdministratorDialog
 
 class AdministratorView(Ui_AdministratorDialog):
     def __init__(self, parent):

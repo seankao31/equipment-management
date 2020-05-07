@@ -1,4 +1,4 @@
-from assetmanagement.src.application import Application
+from application import Application
 
 def main():
     app = Application()

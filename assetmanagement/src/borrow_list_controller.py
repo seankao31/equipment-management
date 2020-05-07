@@ -1,6 +1,6 @@
 from PyQt5 import QtWidgets
 
-from assetmanagement.src.borrow_list_view import BorrowListView
+from borrow_list_view import BorrowListView
 
 class BorrowListController:
     def __init__(self, model):

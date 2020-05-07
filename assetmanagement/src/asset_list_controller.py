@@ -1,6 +1,6 @@
 from PyQt5 import QtWidgets
 
-from assetmanagement.src.asset_list_view import AssetListView
+from asset_list_view import AssetListView
 
 class AssetListController:
     def __init__(self, model):

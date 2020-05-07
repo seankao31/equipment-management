@@ -1,6 +1,6 @@
 from PyQt5 import QtWidgets
 
-from assetmanagement.src.asset_list_dialog import Ui_AssetListDialog
+from asset_list_dialog import Ui_AssetListDialog
 
 class AssetListView(Ui_AssetListDialog):
     def __init__(self, parent):

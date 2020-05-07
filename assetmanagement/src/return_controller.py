@@ -1,6 +1,6 @@
 from PyQt5 import QtCore, QtWidgets
 
-from assetmanagement.src.return_view import ReturnView
+from return_view import ReturnView
 
 class ReturnController:
     def __init__(self, model):

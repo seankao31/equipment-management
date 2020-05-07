@@ -1,4 +1,4 @@
-from assetmanagement.src.passcode_dialog import Ui_PasscodeDialog
+from passcode_dialog import Ui_PasscodeDialog
 
 class PasscodeView(Ui_PasscodeDialog):
     def __init__(self, parent):

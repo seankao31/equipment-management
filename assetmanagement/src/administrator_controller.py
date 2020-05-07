@@ -1,9 +1,9 @@
 from PyQt5 import QtWidgets
 from sqlalchemy.exc import IntegrityError
 
-from assetmanagement.src.administrator_view import AdministratorView
-from assetmanagement.src.model import ModelError
-from assetmanagement.src.utils import error_message
+from administrator_view import AdministratorView
+from model import ModelError
+from utils import error_message
 
 class AdministratorController:
     def __init__(self, model):

@@ -2,15 +2,15 @@ import sys
 
 from PyQt5 import QtWidgets
 
-from assetmanagement.src.administrator_controller import \
+from administrator_controller import \
     AdministratorController
-from assetmanagement.src.asset_list_controller import AssetListController
-from assetmanagement.src.borrow_controller import BorrowController
-from assetmanagement.src.borrow_list_controller import BorrowListController
-from assetmanagement.src.main_view import MainView
-from assetmanagement.src.new_passcode_controller import NewPasscodeController
-from assetmanagement.src.passcode_controller import PasscodeController
-from assetmanagement.src.return_controller import ReturnController
+from asset_list_controller import AssetListController
+from borrow_controller import BorrowController
+from borrow_list_controller import BorrowListController
+from main_view import MainView
+from new_passcode_controller import NewPasscodeController
+from passcode_controller import PasscodeController
+from return_controller import ReturnController
 
 
 class MainController:

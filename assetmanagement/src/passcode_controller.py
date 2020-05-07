@@ -1,7 +1,7 @@
 from PyQt5 import QtWidgets
 
-from assetmanagement.src.passcode_view import PasscodeView
-from assetmanagement.src.utils import error_message
+from passcode_view import PasscodeView
+from utils import error_message
 
 class PasscodeController:
     def __init__(self, model):

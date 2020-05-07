@@ -1,6 +1,6 @@
 from PyQt5 import QtWidgets
 
-from assetmanagement.src.borrow_list_dialog import Ui_BorrowListDialog
+from borrow_list_dialog import Ui_BorrowListDialog
 
 class BorrowListView(Ui_BorrowListDialog):
     def __init__(self, parent):

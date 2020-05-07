@@ -2,8 +2,8 @@ import sys
 
 from PyQt5 import QtGui, QtWidgets
 
-from assetmanagement.src.main_controller import MainController
-from assetmanagement.src.model import Model
+from main_controller import MainController
+from model import Model
 
 class Application:
     def __init__(self):

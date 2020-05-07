@@ -3,8 +3,8 @@ from datetime import date, timedelta
 from PyQt5 import QtWidgets
 from sqlalchemy.exc import IntegrityError
 
-from assetmanagement.src.borrow_view import BorrowView
-from assetmanagement.src.utils import error_message
+from borrow_view import BorrowView
+from utils import error_message
 
 class BorrowController:
     def __init__(self, model):
