@@ -45,9 +45,9 @@ class Ui_MainDialog(object):
 
     def retranslateUi(self, MainDialog):
         _translate = QtCore.QCoreApplication.translate
-        MainDialog.setWindowTitle(_translate("MainDialog", "Asset Management"))
+        MainDialog.setWindowTitle(_translate("MainDialog", "Equipment Management"))
         self.pushButton_Administrator.setText(_translate("MainDialog", "Administrator"))
         self.pushButton_BorrowList.setText(_translate("MainDialog", "Borrow List"))
-        self.pushButton_AssetList.setText(_translate("MainDialog", "Asset List"))
+        self.pushButton_AssetList.setText(_translate("MainDialog", "Equipment List"))
         self.pushButton_Borrow.setText(_translate("MainDialog", "Borrow"))
         self.pushButton_Return.setText(_translate("MainDialog", "Return"))

@@ -115,7 +115,7 @@ class Ui_AdministratorDialog(object):
         self.label_Borrower.setText(_translate("AdministratorDialog", "Borrower"))
         self.pushButton_AddBorrower.setText(_translate("AdministratorDialog", "Add"))
         self.pushButton_RemoveBorrower.setText(_translate("AdministratorDialog", "Remove"))
-        self.label_Asset.setText(_translate("AdministratorDialog", "Asset"))
+        self.label_Asset.setText(_translate("AdministratorDialog", "Equipment"))
         self.pushButton_AddAsset.setText(_translate("AdministratorDialog", "Add"))
         self.pushButton_RemoveAsset.setText(_translate("AdministratorDialog", "Remove"))
         self.pushButton_Close.setText(_translate("AdministratorDialog", "Close"))

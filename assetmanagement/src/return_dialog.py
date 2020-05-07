@@ -60,4 +60,4 @@ class Ui_ReturnDialog(object):
         ReturnDialog.setWindowTitle(_translate("ReturnDialog", "Return"))
         self.label_Title.setText(_translate("ReturnDialog", "Return"))
         self.label_Borrower.setText(_translate("ReturnDialog", "Borrower: "))
-        self.label_Asset.setText(_translate("ReturnDialog", "Asset: "))
+        self.label_Asset.setText(_translate("ReturnDialog", "Equipment: "))

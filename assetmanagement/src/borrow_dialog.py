@@ -65,5 +65,5 @@ class Ui_BorrowDialog(object):
         BorrowDialog.setWindowTitle(_translate("BorrowDialog", "Borrow"))
         self.label_Title.setText(_translate("BorrowDialog", "Borrow"))
         self.label_Borrower.setText(_translate("BorrowDialog", "Borrower: "))
-        self.label_Asset.setText(_translate("BorrowDialog", "Asset: "))
+        self.label_Asset.setText(_translate("BorrowDialog", "Equipment: "))
         self.label_Quantity.setText(_translate("BorrowDialog", "Quantity: "))

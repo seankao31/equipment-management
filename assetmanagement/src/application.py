@@ -8,7 +8,7 @@ from assetmanagement.src.model import Model
 class Application:
     def __init__(self):
         self.app = QtWidgets.QApplication(sys.argv)
-        self.app.setApplicationName("Asset Management System")
+        self.app.setApplicationName("Equipment Management System")
         self.model = Model()
         self.controller = MainController(self.model)
 

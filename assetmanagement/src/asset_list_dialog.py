@@ -62,8 +62,8 @@ class Ui_AssetListDialog(object):
 
     def retranslateUi(self, AssetListDialog):
         _translate = QtCore.QCoreApplication.translate
-        AssetListDialog.setWindowTitle(_translate("AssetListDialog", "Asset List"))
-        self.label_Title.setText(_translate("AssetListDialog", "Asset List"))
+        AssetListDialog.setWindowTitle(_translate("AssetListDialog", "Equipment List"))
+        self.label_Title.setText(_translate("AssetListDialog", "Equipment List"))
         self.checkBox_InstockOnly.setText(_translate("AssetListDialog", "In stock only"))
         item = self.tableWidget.horizontalHeaderItem(0)
         item.setText(_translate("AssetListDialog", "Name"))
