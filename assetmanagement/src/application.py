@@ -9,7 +9,7 @@ class Application:
     def __init__(self):
         self.app = QtWidgets.QApplication(sys.argv)
         font = QtGui.QFont()
-        font.setPointSize(18)
+        font.setPointSize(15)
         self.app.setFont(font)
         self.app.setApplicationName("Equipment Management System")
         self.model = Model()

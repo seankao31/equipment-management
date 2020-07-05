@@ -9,6 +9,6 @@ elif __file__:
 
 if os.name == 'nt':
     # Windows
-    ENGINE = 'sqlite:///' + application_path + '/assetmanagement.db'
+    ENGINE = 'sqlite:///' + application_path + '/equipmentmanagement.db'
 else:
-    ENGINE = 'sqlite:////' + application_path + '/assetmanagement.db'
+    ENGINE = 'sqlite:////' + application_path + '/equipmentmanagement.db'

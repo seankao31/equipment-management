@@ -18,10 +18,6 @@ class Ui_MainDialog(object):
         self.gridLayout.setObjectName("gridLayout")
         self.verticalLayout = QtWidgets.QVBoxLayout()
         self.verticalLayout.setObjectName("verticalLayout")
-        self.pushButton_Administrator = QtWidgets.QPushButton(MainDialog)
-        self.pushButton_Administrator.setAutoDefault(False)
-        self.pushButton_Administrator.setObjectName("pushButton_Administrator")
-        self.verticalLayout.addWidget(self.pushButton_Administrator)
         self.pushButton_Borrow = QtWidgets.QPushButton(MainDialog)
         self.pushButton_Borrow.setAutoDefault(False)
         self.pushButton_Borrow.setObjectName("pushButton_Borrow")
@@ -38,6 +34,10 @@ class Ui_MainDialog(object):
         self.pushButton_AssetList.setAutoDefault(False)
         self.pushButton_AssetList.setObjectName("pushButton_AssetList")
         self.verticalLayout.addWidget(self.pushButton_AssetList)
+        self.pushButton_Administrator = QtWidgets.QPushButton(MainDialog)
+        self.pushButton_Administrator.setAutoDefault(False)
+        self.pushButton_Administrator.setObjectName("pushButton_Administrator")
+        self.verticalLayout.addWidget(self.pushButton_Administrator)
 
         self.pushButton_ChangePasscode = QtWidgets.QPushButton(MainDialog)
         self.pushButton_ChangePasscode.setAutoDefault(False)
@@ -45,8 +45,8 @@ class Ui_MainDialog(object):
         self.verticalLayout.addWidget(self.pushButton_ChangePasscode)
 
         self.imageLabel = QtWidgets.QLabel(MainDialog)
-        pixmap = QtGui.QPixmap('assetmanagement/src/logo.png')
-        pixmap = pixmap.scaledToWidth(100, mode=QtCore.Qt.SmoothTransformation)
+        pixmap = QtGui.QPixmap('logo.png')
+        pixmap = pixmap.scaledToWidth(200, mode=QtCore.Qt.SmoothTransformation)
         self.imageLabel.setPixmap(pixmap)
         self.imageLabel.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignBottom)
         self.verticalLayout.addWidget(self.imageLabel)
@@ -58,9 +58,9 @@ class Ui_MainDialog(object):
     def retranslateUi(self, MainDialog):
         _translate = QtCore.QCoreApplication.translate
         MainDialog.setWindowTitle(_translate("MainDialog", "Equipment Management"))
-        self.pushButton_Administrator.setText(_translate("MainDialog", "Administrator"))
         self.pushButton_Borrow.setText(_translate("MainDialog", "Borrow"))
         self.pushButton_Return.setText(_translate("MainDialog", "Return"))
         self.pushButton_BorrowList.setText(_translate("MainDialog", "Borrow List"))
         self.pushButton_AssetList.setText(_translate("MainDialog", "Equipment List"))
+        self.pushButton_Administrator.setText(_translate("MainDialog", "Administrator"))
         self.pushButton_ChangePasscode.setText(_translate("MainDialog", "Change Passcode"))
