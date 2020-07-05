@@ -27,6 +27,17 @@ class Ui_AdministratorDialog(object):
         self.label_Title.setFont(font)
         self.label_Title.setObjectName("label_Title")
         self.verticalLayout.addWidget(self.label_Title)
+
+        self.horizontalLayout_8 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_8.setObjectName("horizontalLayout_8")
+        self.pushButton_ChangePasscode = QtWidgets.QPushButton(AdministratorDialog)
+        self.pushButton_ChangePasscode.setAutoDefault(False)
+        self.pushButton_ChangePasscode.setObjectName("pushButton_ChangePasscode")
+        self.horizontalLayout_8.addWidget(self.pushButton_ChangePasscode)
+        spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding)
+        self.horizontalLayout_8.addItem(spacerItem2)
+        self.verticalLayout.addLayout(self.horizontalLayout_8)
+
         self.label_Borrower = QtWidgets.QLabel(AdministratorDialog)
         self.label_Borrower.setObjectName("label_Borrower")
         self.verticalLayout.addWidget(self.label_Borrower)
@@ -112,6 +123,7 @@ class Ui_AdministratorDialog(object):
         _translate = QtCore.QCoreApplication.translate
         AdministratorDialog.setWindowTitle(_translate("AdministratorDialog", "Administrator"))
         self.label_Title.setText(_translate("AdministratorDialog", "Administrator"))
+        self.pushButton_ChangePasscode.setText(_translate("AdministratorDialog", "Change Passcode"))
         self.label_Borrower.setText(_translate("AdministratorDialog", "Borrower"))
         self.pushButton_AddBorrower.setText(_translate("AdministratorDialog", "Add"))
         self.pushButton_RemoveBorrower.setText(_translate("AdministratorDialog", "Remove"))

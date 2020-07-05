@@ -39,11 +39,6 @@ class Ui_MainDialog(object):
         self.pushButton_Administrator.setObjectName("pushButton_Administrator")
         self.verticalLayout.addWidget(self.pushButton_Administrator)
 
-        self.pushButton_ChangePasscode = QtWidgets.QPushButton(MainDialog)
-        self.pushButton_ChangePasscode.setAutoDefault(False)
-        self.pushButton_ChangePasscode.setObjectName("pushButton_ChangePasscode")
-        self.verticalLayout.addWidget(self.pushButton_ChangePasscode)
-
         self.imageLabel = QtWidgets.QLabel(MainDialog)
         pixmap = QtGui.QPixmap('logo.png')
         pixmap = pixmap.scaledToWidth(200, mode=QtCore.Qt.SmoothTransformation)
@@ -63,4 +58,3 @@ class Ui_MainDialog(object):
         self.pushButton_BorrowList.setText(_translate("MainDialog", "Borrow List"))
         self.pushButton_AssetList.setText(_translate("MainDialog", "Equipment List"))
         self.pushButton_Administrator.setText(_translate("MainDialog", "Administrator"))
-        self.pushButton_ChangePasscode.setText(_translate("MainDialog", "Change Passcode"))

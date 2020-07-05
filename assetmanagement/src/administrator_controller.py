@@ -3,6 +3,8 @@ from sqlalchemy.exc import IntegrityError
 
 from administrator_view import AdministratorView
 from model import ModelError
+from new_passcode_controller import NewPasscodeController
+from passcode_controller import PasscodeController
 from utils import error_message
 
 class AdministratorController:
@@ -11,6 +13,8 @@ class AdministratorController:
         self.view = AdministratorView(self.dialog)
         self.model = model
 
+        self.view.pushButton_ChangePasscode.clicked \
+            .connect(self.change_passcode_verify)
         self.view.pushButton_AddBorrower.clicked \
             .connect(self.add_borrower)
         self.view.pushButton_RemoveBorrower.clicked \
@@ -40,6 +44,22 @@ class AdministratorController:
             self.update_asset_combobox,
             pass_arguments=False
         )
+
+    def change_passcode_verify(self):
+        self.passcode_controller = PasscodeController(self.model)
+        self.passcode_controller.dialog.accepted \
+            .connect(self.change_passcode_update)
+        # self.passcode_controller.dialog.rejected \
+        #     .connect(sys.exit)
+        self.passcode_controller.run()
+
+    def change_passcode_update(self):
+        self.new_passcode_controller = NewPasscodeController(self.model)
+        # self.new_passcode_controller.dialog.accepted \
+        #     .connect(self.enter)
+        # self.new_passcode_controller.dialog.rejected \
+        #     .connect(sys.exit)
+        self.new_passcode_controller.run()
 
     def run(self):
         self.reset()
