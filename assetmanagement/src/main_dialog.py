@@ -7,6 +7,7 @@
 # WARNING! All changes made in this file will be lost!
 
 
+import os, sys
 from PyQt5 import QtCore, QtGui, QtWidgets
 
 
@@ -40,7 +41,9 @@ class Ui_MainDialog(object):
         self.verticalLayout.addWidget(self.pushButton_Administrator)
 
         self.imageLabel = QtWidgets.QLabel(MainDialog)
-        pixmap = QtGui.QPixmap('logo.png')
+
+        logo = self.resource_path('logo.png')
+        pixmap = QtGui.QPixmap(logo)
         pixmap = pixmap.scaledToWidth(200, mode=QtCore.Qt.SmoothTransformation)
         self.imageLabel.setPixmap(pixmap)
         self.imageLabel.setAlignment(QtCore.Qt.AlignRight | QtCore.Qt.AlignBottom)
@@ -49,6 +52,16 @@ class Ui_MainDialog(object):
 
         self.retranslateUi(MainDialog)
         QtCore.QMetaObject.connectSlotsByName(MainDialog)
+
+    def resource_path(self, relative_path):
+        """ Get absolute path to resource, works for dev and for PyInstaller """
+        try:
+            # PyInstaller creates a temp folder and stores path in _MEIPASS
+            base_path = sys._MEIPASS
+        except Exception:
+            base_path = os.path.abspath(".")
+
+        return os.path.join(base_path, relative_path)
 
     def retranslateUi(self, MainDialog):
         _translate = QtCore.QCoreApplication.translate
